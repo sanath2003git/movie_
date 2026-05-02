@@ -7,16 +7,17 @@ function App() {
       <h1>Movie App</h1>
       <p>Welcome to React Journey</p>
       </div>
-      <Text/>
+      <Text display="hello" />
+      <Text display="world" />
     </>
       
   )
 }
-function Text(){
+function Text({display}){
   return(
     <div>
       <p>
-        hello world
+        {display}
       </p>
     </div>
   );
