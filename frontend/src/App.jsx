@@ -1,26 +1,15 @@
 import './App.css'
+import MovieCard from './components/MovieCard'
 
 function App() {
   return (
     <>
-      <div>
-      <h1>Movie App</h1>
-      <p>Welcome to React Journey</p>
-      </div>
-      <Text display="hello" />
-      <Text display="world" />
+      <MovieCard movie={{title: "new film", release_date:"2025", url: "https://picsum.photos/200/300"}}></MovieCard>
+      <MovieCard movie={{title: "new film 2", release_date:"2026", url: "https://picsum.photos/200/300"}}></MovieCard>
     </>
       
   )
 }
-function Text({display}){
-  return(
-    <div>
-      <p>
-        {display}
-      </p>
-    </div>
-  );
-}
+
 
 export default App
