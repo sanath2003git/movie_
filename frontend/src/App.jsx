@@ -2,13 +2,17 @@ import './App.css'
 import MovieCard from './components/MovieCard'
 
 function App() {
+  const movieNumber = 1;
   return (
     <>
-      <MovieCard movie={{title: "new film", release_date:"2025", url: "https://picsum.photos/200/300"}}></MovieCard>
+      {movieNumber === 1 ? ( 
+        <MovieCard movie={{title: "new film", release_date:"2025", url: "https://picsum.photos/200/300"}}></MovieCard>
+      ):(
       <MovieCard movie={{title: "new film 2", release_date:"2026", url: "https://picsum.photos/200/300"}}></MovieCard>
+      )}
     </>
       
-  )
+  );
 }
 
 
