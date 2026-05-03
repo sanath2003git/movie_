@@ -42,6 +42,29 @@
   background-color: #f40612;
 }
 
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.no-results {
+  text-align: center;
+  width: 100%;
+  padding: 4rem 1rem;
+}
+
+.no-results h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.no-results p {
+  color: #999;
+}
 
 @media (max-width: 639px) {
   .home {
@@ -50,14 +73,10 @@
 
   .search-form {
     margin-bottom: 1rem;
+    flex-direction: column;
   }
-}
 
-.movies-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  padding: 1rem;
-  width: 100%;
-  box-sizing: border-box;
+  .search-button {
+    width: 100%;
+  }
 }

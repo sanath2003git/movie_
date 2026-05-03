@@ -72,6 +72,10 @@ function Home({ favorites, setFavorites }) {
     e.preventDefault()
   }
 
+  const filteredMovies = movies.filter((movie) =>
+    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   return (
     <div className="home">
       <form onSubmit={handleSearch} className="search-form">
@@ -89,20 +93,21 @@ function Home({ favorites, setFavorites }) {
       </form>
 
       <div className="movies-grid">
-        {movies
-          .filter((movie) =>
-            movie.title
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
-          )
-          .map((movie) => (
+        {filteredMovies.length === 0 ? (
+          <div className="no-results">
+            <h2>No movies found 🎬</h2>
+            <p>Try another search.</p>
+          </div>
+        ) : (
+          filteredMovies.map((movie) => (
             <MovieCard
               key={movie.id}
               movie={movie}
               favorites={favorites}
               setFavorites={setFavorites}
             />
-          ))}
+          ))
+        )}
       </div>
     </div>
   )
