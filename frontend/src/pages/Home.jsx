@@ -23,7 +23,7 @@ function Home(){
         </form>
         <div className="movies-grid">
             {movies.map(movie => (
-                movie.title.toLocaleLowerCase().startsWith(searchQuery.toLowerCase()) &&<MovieCard movie={movie} key={movie.id} />))}
+                <MovieCard movie={movie} key={movie.id} />))}
         </div>
     </div>
 }
