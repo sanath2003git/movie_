@@ -4,6 +4,7 @@ import Favorites from './pages/Favorites'
 import NavBar from './components/NavBar'
 import { Routes, Route } from 'react-router-dom'
 import { useState, useEffect } from "react"
+import MovieDetails from "./pages/MovieDetails"
 
 function App() {
   const [favorites, setFavorites] = useState(() => {
@@ -38,6 +39,15 @@ function App() {
             path="/favorites"
             element={
               <Favorites
+                favorites={favorites}
+                setFavorites={setFavorites}
+              />
+            }
+          />
+          <Route
+            path="/movie/:id"
+            element={
+              <MovieDetails
                 favorites={favorites}
                 setFavorites={setFavorites}
               />

@@ -1,0 +1,82 @@
+.movie-details {
+  padding: 2rem;
+}
+
+.back-btn {
+  display: inline-block;
+  margin-bottom: 2rem;
+  color: white;
+  text-decoration: none;
+  background: #e50914;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  transition: 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #f40612;
+}
+
+.details-container {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.details-poster {
+  width: 280px;
+  border-radius: 10px;
+}
+
+.details-info {
+  max-width: 600px;
+}
+
+.details-info h1 {
+  margin-bottom: 1rem;
+}
+
+.year {
+  color: #aaa;
+  margin-bottom: 1rem;
+}
+
+.description {
+  line-height: 1.7;
+  color: #ddd;
+}
+
+.favorite-detail-btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  background: #e50914;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.favorite-detail-btn:hover {
+  background: #f40612;
+}
+
+@media (max-width: 768px) {
+  .movie-details {
+    padding: 1rem;
+  }
+
+  .details-container {
+    flex-direction: column;
+  }
+
+  .details-poster {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .details-info h1 {
+    font-size: 2rem;
+  }
+}
