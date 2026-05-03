@@ -12,8 +12,9 @@ function Home(){
     const handleSearch = (e) =>{
         e.preventDefault()
         alert(searchQuery)
+        setSearchQuery("")
 
-    }
+    };
 
     return <div className="home">
         <form onSubmit={handleSearch}className="search-form">
@@ -21,7 +22,8 @@ function Home(){
             <button type="submit" className="search-button">Search</button>
         </form>
         <div className="movies-grid">
-            {movies.map(movie => (<MovieCard movie={movie} key={movie.id} />))}
+            {movies.map(movie => (
+                movie.title.toLocaleLowerCase().startsWith(searchQuery.toLowerCase()) &&<MovieCard movie={movie} key={movie.id} />))}
         </div>
     </div>
 }
