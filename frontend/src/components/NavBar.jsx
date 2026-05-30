@@ -1,34 +1,78 @@
-import { NavLink } from "react-router-dom"
-import "../css/Navbar.css"
+import { NavLink } from "react-router-dom";
 
 function NavBar() {
   return (
-    <nav className="navbar">
-      <div className="navbar-brand">
-        <NavLink to="/">Anime Movie</NavLink>
-      </div>
-
-      <div className="navbar-links">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+      <div className="container">
         <NavLink
+          className="navbar-brand fw-bold"
           to="/"
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
         >
-          Home
+           Anime Movie
         </NavLink>
 
-        <NavLink
-          to="/favorites"
-          className={({ isActive }) =>
-            isActive ? "nav-link active" : "nav-link"
-          }
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
         >
-          Favorites
-        </NavLink>
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div
+          className="collapse navbar-collapse"
+          id="navbarNav"
+        >
+          <ul className="navbar-nav ms-auto">
+
+            <li className="nav-item">
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  isActive
+                    ? "nav-link active fw-bold"
+                    : "nav-link"
+                }
+              >
+                <i className="bi bi-house-fill me-1"></i>
+                Home
+              </NavLink>
+            </li>
+
+            <li className="nav-item">
+              <NavLink
+                to="/favorites"
+                className={({ isActive }) =>
+                  isActive
+                    ? "nav-link active fw-bold"
+                    : "nav-link"
+                }
+              >
+                <i className="bi bi-heart-fill me-1"></i>
+                Favorites
+              </NavLink>
+            </li>
+
+            <li className="nav-item">
+              <NavLink
+                to="/watchlist"
+                className={({ isActive }) =>
+                  isActive
+                    ? "nav-link active fw-bold"
+                    : "nav-link"
+                }
+              >
+                <i className="bi bi-bookmark-fill me-1"></i>
+                Watchlist
+              </NavLink>
+            </li>
+
+          </ul>
+        </div>
       </div>
     </nav>
-  )
+  );
 }
 
-export default NavBar
+export default NavBar;

@@ -1,102 +1,42 @@
 import { useParams, Link } from "react-router-dom"
-import "../css/MovieDetails.css"
+import {
+  getMovieById,
+  getRelatedMovies
+} from "../services/movieService"
+import MovieCard from "../components/MovieCard"
 
-function MovieDetails({ favorites, setFavorites }) {
+function MovieDetails({
+  favorites,
+  setFavorites,
+  watchlist,
+  setWatchlist
+}) {
   const { id } = useParams()
 
-  const movies = [
-    {
-      id: 1,
-      title: "Jujutsu Kaisen 0",
-      released_date: "2021",
-      description:
-        "Yuta Okkotsu joins Jujutsu High and learns to control the powerful cursed spirit Rika.",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Gekij%C5%8D-ban_Jujutsu_Kaisen_0.png/250px-Gekij%C5%8D-ban_Jujutsu_Kaisen_0.png"
-    },
-    {
-      id: 2,
-      title: "Your Name",
-      released_date: "2016",
-      description:
-        "Two teenagers mysteriously swap bodies and form a deep connection.",
-      url: "https://upload.wikimedia.org/wikipedia/en/0/0b/Your_Name_poster.png"
-    },
-    {
-      id: 3,
-      title: "Weathering With You",
-      released_date: "2019",
-      description:
-        "A boy meets a girl who can control the weather.",
-      url: "https://upload.wikimedia.org/wikipedia/en/6/66/Weathering_with_You_Poster.jpg"
-    },
-    {
-      id: 4,
-      title: "A Silent Voice",
-      released_date: "2016",
-      description:
-        "A former bully seeks redemption after hurting a deaf girl in school.",
-      url: "https://upload.wikimedia.org/wikipedia/en/3/32/A_Silent_Voice_Film_Poster.jpg"
-    },
-    {
-      id: 5,
-      title: "My Hero Academia: Two Heroes",
-      released_date: "2018",
-      description:
-        "Deku and All Might face villains on I-Island.",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/My_Hero_Academia_-_Two_Heroes_poster.jpg/250px-My_Hero_Academia_-_Two_Heroes_poster.jpg"
-    },
-    {
-      id: 6,
-      title: "My Hero Academia: Heroes Rising",
-      released_date: "2019",
-      description:
-        "Class 1-A fights a dangerous villain on Nabu Island.",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/6/6a/My_Hero_Academia_-_Heroes_Rising.jpg/250px-My_Hero_Academia_-_Heroes_Rising.jpg"
-    },
-    {
-      id: 7,
-      title: "My Hero Academia: World Heroes' Mission",
-      released_date: "2021",
-      description:
-        "Heroes around the world unite against a deadly threat.",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/World_Heroes%27_Mission_key_visual.jpeg/250px-World_Heroes%27_Mission_key_visual.jpeg"
-    },
-    {
-      id: 8,
-      title: "My Hero Academia: You're Next",
-      released_date: "2024",
-      description:
-        "A new enemy rises while Deku continues his journey.",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/1/13/My_Hero_Academia_-_You%27re_Next.png/250px-My_Hero_Academia_-_You%27re_Next.png"
-    },
-    {
-      id: 9,
-      title: "Demon Slayer: Mugen Train",
-      released_date: "2020",
-      description:
-        "Tanjiro joins Rengoku aboard a mysterious train.",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/2/21/Kimetsu_no_Yaiba_Mugen_Ressha_Hen_Poster.jpg/250px-Kimetsu_no_Yaiba_Mugen_Ressha_Hen_Poster.jpg"
-    },
-    {
-      id: 10,
-      title: "Demon Slayer: To the Swordsmith Village",
-      released_date: "2023",
-      description:
-        "Tanjiro visits the swordsmith village and faces new demons.",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Demon-Slayer-2023.jpeg/250px-Demon-Slayer-2023.jpeg"
-    }
-  ]
-
-  const movie = movies.find(
-    (movie) => movie.id === Number(id)
-  )
+  const movie = getMovieById(id)
+  const relatedMovies = getRelatedMovies(id)
 
   if (!movie) {
-    return <h2>Movie not found</h2>
+    return (
+      <div className="container text-center mt-5">
+        <h2>🎬 Movie Not Found</h2>
+
+        <Link
+          to="/"
+          className="btn btn-primary mt-3"
+        >
+          Back Home
+        </Link>
+      </div>
+    )
   }
 
   const isFavorite = favorites.some(
     (favMovie) => favMovie.id === movie.id
+  )
+
+  const isInWatchlist = watchlist.some(
+    (watchMovie) => watchMovie.id === movie.id
   )
 
   function toggleFavorite() {
@@ -111,40 +51,136 @@ function MovieDetails({ favorites, setFavorites }) {
     }
   }
 
+  function toggleWatchlist() {
+    if (isInWatchlist) {
+      setWatchlist(
+        watchlist.filter(
+          (watchMovie) => watchMovie.id !== movie.id
+        )
+      )
+    } else {
+      setWatchlist([...watchlist, movie])
+    }
+  }
+
   return (
-    <div className="movie-details">
-      <Link to="/" className="back-btn">
+    <div className="container py-4">
+      <Link
+        to="/"
+        className="btn btn-danger mb-4"
+      >
         ← Back
       </Link>
 
-      <div className="details-container">
-        <img
-          src={movie.url}
-          alt={movie.title}
-          className="details-poster"
-        />
+      <div className="row g-4 align-items-start">
+        <div className="col-md-4 text-center">
+          <img
+            src={movie.url}
+            alt={movie.title}
+            className="img-fluid rounded shadow"
+            style={{
+              maxHeight: "500px",
+              objectFit: "cover"
+            }}
+          />
+        </div>
 
-        <div className="details-info">
-          <h1>{movie.title}</h1>
+        <div className="col-md-8">
+          <h1 className="mb-3 fw-bold">
+            {movie.title}
+          </h1>
 
-          <p className="year">
-            Released: {movie.released_date}
+          <div className="mb-3">
+            <span className="badge bg-primary me-2">
+              {movie.genre}
+            </span>
+
+            <span className="badge bg-info me-2">
+              {movie.franchise}
+            </span>
+
+            <span className="badge bg-warning text-dark">
+              ⭐ {movie.rating}
+            </span>
+          </div>
+
+          <p className="text-secondary">
+            <strong>Released:</strong>{" "}
+            {movie.released_date}
           </p>
 
-          <p className="description">
+          <p className="lead">
             {movie.description}
           </p>
 
-          <button
-            className="favorite-detail-btn"
-            onClick={toggleFavorite}
-          >
-            {isFavorite
-              ? "❤️ Remove Favorite"
-              : "🤍 Add Favorite"}
-          </button>
+          <div className="d-flex gap-3 mt-4">
+            <button
+              className={
+                isFavorite
+                  ? "btn btn-danger"
+                  : "btn btn-outline-danger"
+              }
+              onClick={toggleFavorite}
+            >
+              {isFavorite ? (
+                <>
+                  <i className="bi bi-heart-fill"></i>
+                  {" "}Remove Favorite
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-heart"></i>
+                  {" "}Add Favorite
+                </>
+              )}
+            </button>
+
+            <button
+              className={
+                isInWatchlist
+                  ? "btn btn-success"
+                  : "btn btn-outline-success"
+              }
+              onClick={toggleWatchlist}
+            >
+              {isInWatchlist ? (
+                <>
+                  <i className="bi bi-bookmark-fill"></i>
+                  {" "}Remove Watchlist
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-bookmark"></i>
+                  {" "}Add Watchlist
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
+
+      {relatedMovies.length > 0 && (
+        <div className="mt-5">
+          <h3 className="mb-4">
+            🎬 Related Movies
+          </h3>
+
+          <div className="row">
+            {relatedMovies.map((relatedMovie) => (
+              <div
+                key={relatedMovie.id}
+                className="col-sm-6 col-md-4 col-lg-3 mb-4"
+              >
+                <MovieCard
+                  movie={relatedMovie}
+                  favorites={favorites}
+                  setFavorites={setFavorites}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

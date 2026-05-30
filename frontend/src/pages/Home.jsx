@@ -1,114 +1,239 @@
 import MovieCard from "../components/MovieCard"
 import { useState } from "react"
-import "../css/Home.css"
+import { getMovies } from "../services/movieService"
 
-function Home({ favorites, setFavorites }) {
+function Home({
+  favorites,
+  setFavorites,
+  watchlist = []
+}) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedGenre, setSelectedGenre] = useState("All")
+  const [sortBy, setSortBy] = useState("")
 
-  const movies = [
-    {
-      id: 1,
-      title: "Jujutsu Kaisen 0",
-      released_date: "2021",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Gekij%C5%8D-ban_Jujutsu_Kaisen_0.png/250px-Gekij%C5%8D-ban_Jujutsu_Kaisen_0.png"
-    },
-    {
-      id: 2,
-      title: "Your Name",
-      released_date: "2016",
-      url: "https://upload.wikimedia.org/wikipedia/en/0/0b/Your_Name_poster.png"
-    },
-    {
-      id: 3,
-      title: "Weathering With You",
-      released_date: "2019",
-      url: "https://upload.wikimedia.org/wikipedia/en/6/66/Weathering_with_You_Poster.jpg"
-    },
-    {
-      id: 4,
-      title: "A Silent Voice",
-      released_date: "2016",
-      url: "https://upload.wikimedia.org/wikipedia/en/3/32/A_Silent_Voice_Film_Poster.jpg"
-    },
-    {
-      id: 5,
-      title: "My Hero Academia: Two Heroes",
-      released_date: "2018",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1d/My_Hero_Academia_-_Two_Heroes_poster.jpg/250px-My_Hero_Academia_-_Two_Heroes_poster.jpg"
-    },
-    {
-      id: 6,
-      title: "My Hero Academia: Heroes Rising",
-      released_date: "2019",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/6/6a/My_Hero_Academia_-_Heroes_Rising.jpg/250px-My_Hero_Academia_-_Heroes_Rising.jpg"
-    },
-    {
-      id: 7,
-      title: "My Hero Academia: World Heroes' Mission",
-      released_date: "2021",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/World_Heroes%27_Mission_key_visual.jpeg/250px-World_Heroes%27_Mission_key_visual.jpeg"
-    },
-    {
-      id: 8,
-      title: "My Hero Academia: You're Next",
-      released_date: "2024",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/1/13/My_Hero_Academia_-_You%27re_Next.png/250px-My_Hero_Academia_-_You%27re_Next.png"
-    },
-    {
-      id: 9,
-      title: "Demon Slayer: Mugen Train",
-      released_date: "2020",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/2/21/Kimetsu_no_Yaiba_Mugen_Ressha_Hen_Poster.jpg/250px-Kimetsu_no_Yaiba_Mugen_Ressha_Hen_Poster.jpg"
-    },
-    {
-      id: 10,
-      title: "Demon Slayer: To the Swordsmith Village",
-      released_date: "2023",
-      url: "https://upload.wikimedia.org/wikipedia/en/thumb/8/80/Demon-Slayer-2023.jpeg/250px-Demon-Slayer-2023.jpeg"
-    }
+  const movies = getMovies()
+
+  const genres = [
+    "All",
+    "Action",
+    "Romance",
+    "Fantasy",
+    "Drama"
   ]
 
   const handleSearch = (e) => {
     e.preventDefault()
   }
 
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  let filteredMovies = movies.filter((movie) => {
+    const matchesSearch =
+      movie.title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+
+    const matchesGenre =
+      selectedGenre === "All" ||
+      movie.genre === selectedGenre
+
+    return matchesSearch && matchesGenre
+  })
+
+  filteredMovies = [...filteredMovies]
+
+  switch (sortBy) {
+    case "rating-desc":
+      filteredMovies.sort(
+        (a, b) => b.rating - a.rating
+      )
+      break
+
+    case "rating-asc":
+      filteredMovies.sort(
+        (a, b) => a.rating - b.rating
+      )
+      break
+
+    case "year-desc":
+      filteredMovies.sort(
+        (a, b) =>
+          Number(b.released_date) -
+          Number(a.released_date)
+      )
+      break
+
+    case "year-asc":
+      filteredMovies.sort(
+        (a, b) =>
+          Number(a.released_date) -
+          Number(b.released_date)
+      )
+      break
+
+    case "title-asc":
+      filteredMovies.sort((a, b) =>
+        a.title.localeCompare(b.title)
+      )
+      break
+
+    case "title-desc":
+      filteredMovies.sort((a, b) =>
+        b.title.localeCompare(a.title)
+      )
+      break
+
+    default:
+      break
+  }
 
   return (
-    <div className="home">
-      <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          placeholder="search for anime movies..."
-          className="search-input"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+    <div className="container">
+      <form
+        onSubmit={handleSearch}
+        className="row justify-content-center mb-4"
+      >
+        <div className="col-md-8">
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="Search for anime movies..."
+              className="form-control"
+              value={searchQuery}
+              onChange={(e) =>
+                setSearchQuery(e.target.value)
+              }
+            />
 
-        <button type="submit" className="search-button">
-          Search
-        </button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+            >
+              <i className="bi bi-search"></i> Search
+            </button>
+          </div>
+        </div>
       </form>
 
-      <div className="movies-grid">
-        {filteredMovies.length === 0 ? (
-          <div className="no-results">
-            <h2>No movies found 🎬</h2>
-            <p>Try another search.</p>
-          </div>
-        ) : (
-          filteredMovies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              movie={movie}
-              favorites={favorites}
-              setFavorites={setFavorites}
-            />
-          ))
-        )}
+      <div className="row mb-4">
+        <div className="col-md-6 mb-2">
+          <select
+            className="form-select"
+            value={selectedGenre}
+            onChange={(e) =>
+              setSelectedGenre(e.target.value)
+            }
+          >
+            {genres.map((genre) => (
+              <option
+                key={genre}
+                value={genre}
+              >
+                {genre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="col-md-6 mb-2">
+          <select
+            className="form-select"
+            value={sortBy}
+            onChange={(e) =>
+              setSortBy(e.target.value)
+            }
+          >
+            <option value="">
+              Sort By
+            </option>
+
+            <option value="rating-desc">
+              Rating (High → Low)
+            </option>
+
+            <option value="rating-asc">
+              Rating (Low → High)
+            </option>
+
+            <option value="year-desc">
+              Newest First
+            </option>
+
+            <option value="year-asc">
+              Oldest First
+            </option>
+
+            <option value="title-asc">
+              A-Z
+            </option>
+
+            <option value="title-desc">
+              Z-A
+            </option>
+          </select>
+        </div>
       </div>
+
+      {/* Statistics Dashboard */}
+      <div className="row mb-4">
+        <div className="col-md-3 col-6 mb-3">
+          <div className="card text-center shadow-sm">
+            <div className="card-body">
+              <h3>{movies.length}</h3>
+              <p className="mb-0">🎬 Movies</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-3 col-6 mb-3">
+          <div className="card text-center shadow-sm">
+            <div className="card-body">
+              <h3>{favorites.length}</h3>
+              <p className="mb-0">❤️ Favorites</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-3 col-6 mb-3">
+          <div className="card text-center shadow-sm">
+            <div className="card-body">
+              <h3>{watchlist.length}</h3>
+              <p className="mb-0">⏰ Watchlist</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-3 col-6 mb-3">
+          <div className="card text-center shadow-sm">
+            <div className="card-body">
+              <h3>{genres.length - 1}</h3>
+              <p className="mb-0">🎭 Genres</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {filteredMovies.length === 0 ? (
+        <div className="text-center mt-5">
+          <h2>No movies found 🎬</h2>
+          <p className="text-muted">
+            Try another search.
+          </p>
+        </div>
+      ) : (
+        <div className="row">
+          {filteredMovies.map((movie) => (
+            <div
+              key={movie.id}
+              className="col-sm-6 col-md-4 col-lg-3 mb-4"
+            >
+              <MovieCard
+                movie={movie}
+                favorites={favorites}
+                setFavorites={setFavorites}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
