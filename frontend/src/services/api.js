@@ -5,14 +5,16 @@ const API_URL =
 
 
 export const getMovies = async (
-  search = ""
+  search = "",
+  genre = "All"
 ) => {
 
   const response = await axios.get(
     API_URL,
     {
       params: {
-        search
+        search,
+        genre
       }
     }
   )

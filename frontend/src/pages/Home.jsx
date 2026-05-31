@@ -28,7 +28,8 @@ function Home({
         setLoading(true)
 
         const data = await getMovies(
-          searchQuery
+          searchQuery,
+          selectedGenre
         )
 
         setMovies(data)
@@ -50,24 +51,13 @@ function Home({
 
     return () => clearTimeout(timer)
 
-  }, [searchQuery])
+  }, [searchQuery, selectedGenre])
 
   const handleSearch = (e) => {
     e.preventDefault()
   }
 
-  let filteredMovies = movies.filter(
-    (movie) => {
-
-      const matchesGenre =
-        selectedGenre === "All" ||
-        movie.genre === selectedGenre
-
-      return matchesGenre
-    }
-  )
-
-  filteredMovies = [...filteredMovies]
+  let filteredMovies = [...movies]
 
   switch (sortBy) {
     case "rating-desc":
@@ -230,6 +220,7 @@ function Home({
           <div className="card text-center shadow-sm">
             <div className="card-body">
               <h3>{movies.length}</h3>
+
               <p className="mb-0">
                 🎬 Movies
               </p>
