@@ -27,9 +27,19 @@ function Home({
       try {
         setLoading(true)
 
+        const sortMap = {
+          "rating-desc": "rating_desc",
+          "rating-asc": "rating_asc",
+          "year-desc": "year_desc",
+          "year-asc": "year_asc",
+          "title-asc": "title_asc",
+          "title-desc": "title_desc"
+        }
+
         const data = await getMovies(
           searchQuery,
-          selectedGenre
+          selectedGenre,
+          sortMap[sortBy] || ""
         )
 
         setMovies(data)
@@ -51,58 +61,17 @@ function Home({
 
     return () => clearTimeout(timer)
 
-  }, [searchQuery, selectedGenre])
+  }, [
+    searchQuery,
+    selectedGenre,
+    sortBy
+  ])
 
   const handleSearch = (e) => {
     e.preventDefault()
   }
 
-  let filteredMovies = [...movies]
-
-  switch (sortBy) {
-    case "rating-desc":
-      filteredMovies.sort(
-        (a, b) => b.rating - a.rating
-      )
-      break
-
-    case "rating-asc":
-      filteredMovies.sort(
-        (a, b) => a.rating - b.rating
-      )
-      break
-
-    case "year-desc":
-      filteredMovies.sort(
-        (a, b) =>
-          Number(b.released_date) -
-          Number(a.released_date)
-      )
-      break
-
-    case "year-asc":
-      filteredMovies.sort(
-        (a, b) =>
-          Number(a.released_date) -
-          Number(b.released_date)
-      )
-      break
-
-    case "title-asc":
-      filteredMovies.sort((a, b) =>
-        a.title.localeCompare(b.title)
-      )
-      break
-
-    case "title-desc":
-      filteredMovies.sort((a, b) =>
-        b.title.localeCompare(a.title)
-      )
-      break
-
-    default:
-      break
-  }
+  const filteredMovies = movies
 
   if (loading) {
     return (
@@ -121,12 +90,14 @@ function Home({
 
   return (
     <div className="container">
+
       <form
         onSubmit={handleSearch}
         className="row justify-content-center mb-4"
       >
         <div className="col-md-8">
           <div className="input-group">
+
             <input
               type="text"
               placeholder="Search for anime movies..."
@@ -146,11 +117,13 @@ function Home({
               <i className="bi bi-search"></i>
               {" "}Search
             </button>
+
           </div>
         </div>
       </form>
 
       <div className="row mb-4">
+
         <div className="col-md-6 mb-2">
           <select
             className="form-select"
@@ -211,15 +184,19 @@ function Home({
             </option>
           </select>
         </div>
+
       </div>
 
-      {/* Statistics Dashboard */}
+      {/* Statistics */}
 
       <div className="row mb-4">
+
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>{movies.length}</h3>
+              <h3>
+                {movies.length}
+              </h3>
 
               <p className="mb-0">
                 🎬 Movies
@@ -269,10 +246,12 @@ function Home({
             </div>
           </div>
         </div>
+
       </div>
 
       {filteredMovies.length === 0 ? (
         <div className="text-center mt-5">
+
           <h2>
             No movies found 🎬
           </h2>
@@ -280,9 +259,11 @@ function Home({
           <p className="text-muted">
             Try another search.
           </p>
+
         </div>
       ) : (
         <div className="row">
+
           {filteredMovies.map(
             (movie) => (
               <div
@@ -297,8 +278,10 @@ function Home({
               </div>
             )
           )}
+
         </div>
       )}
+
     </div>
   )
 }
