@@ -1,6 +1,6 @@
 import MovieCard from "../components/MovieCard"
-import { useState } from "react"
-import { getMovies } from "../services/movieService"
+import { useState, useEffect } from "react"
+import { getMovies } from "../services/api"
 
 function Home({
   favorites,
@@ -11,7 +11,8 @@ function Home({
   const [selectedGenre, setSelectedGenre] = useState("All")
   const [sortBy, setSortBy] = useState("")
 
-  const movies = getMovies()
+  const [movies, setMovies] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const genres = [
     "All",
@@ -20,6 +21,24 @@ function Home({
     "Fantasy",
     "Drama"
   ]
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const data = await getMovies()
+        setMovies(data)
+      } catch (error) {
+        console.error(
+          "Error fetching movies:",
+          error
+        )
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMovies()
+  }, [])
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -85,6 +104,21 @@ function Home({
       break
   }
 
+  if (loading) {
+    return (
+      <div className="text-center mt-5">
+        <div
+          className="spinner-border"
+          role="status"
+        ></div>
+
+        <p className="mt-3">
+          Loading movies...
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="container">
       <form
@@ -107,7 +141,8 @@ function Home({
               type="submit"
               className="btn btn-primary"
             >
-              <i className="bi bi-search"></i> Search
+              <i className="bi bi-search"></i>{" "}
+              Search
             </button>
           </div>
         </div>

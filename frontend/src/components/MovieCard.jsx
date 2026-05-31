@@ -26,7 +26,7 @@ function MovieCard({ movie, favorites, setFavorites }) {
     >
       <div className="card h-100 shadow-sm border-0">
         <img
-          src={movie.url}
+          src={movie.image_url}
           alt={movie.title}
           className="card-img-top"
           style={{
