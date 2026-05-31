@@ -1,8 +1,9 @@
 import { useParams, Link } from "react-router-dom"
+import { useState, useEffect } from "react"
 import {
   getMovieById,
-  getRelatedMovies
-} from "../services/movieService"
+  getMovies
+} from "../services/api"
 import MovieCard from "../components/MovieCard"
 
 function MovieDetails({
@@ -13,8 +14,57 @@ function MovieDetails({
 }) {
   const { id } = useParams()
 
-  const movie = getMovieById(id)
-  const relatedMovies = getRelatedMovies(id)
+  const [movie, setMovie] = useState(null)
+  const [relatedMovies, setRelatedMovies] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchMovieData = async () => {
+      try {
+        // Fetch selected movie
+        const movieData = await getMovieById(id)
+        setMovie(movieData)
+
+        // Fetch all movies
+        const allMovies = await getMovies()
+
+        // Find related movies
+        const related = allMovies
+          .filter(
+            (m) =>
+              m.id !== movieData.id &&
+              m.franchise === movieData.franchise
+          )
+          .slice(0, 4)
+
+        setRelatedMovies(related)
+      } catch (error) {
+        console.error(
+          "Error fetching movie:",
+          error
+        )
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMovieData()
+  }, [id])
+
+  if (loading) {
+    return (
+      <div className="text-center mt-5">
+        <div
+          className="spinner-border"
+          role="status"
+        ></div>
+
+        <p className="mt-3">
+          Loading movie...
+        </p>
+      </div>
+    )
+  }
 
   if (!movie) {
     return (
@@ -75,7 +125,7 @@ function MovieDetails({
       <div className="row g-4 align-items-start">
         <div className="col-md-4 text-center">
           <img
-            src={movie.url}
+            src={movie.image_url}
             alt={movie.title}
             className="img-fluid rounded shadow"
             style={{
@@ -95,9 +145,11 @@ function MovieDetails({
               {movie.genre}
             </span>
 
-            <span className="badge bg-info me-2">
-              {movie.franchise}
-            </span>
+            {movie.franchise && (
+              <span className="badge bg-info me-2">
+                {movie.franchise}
+              </span>
+            )}
 
             <span className="badge bg-warning text-dark">
               ⭐ {movie.rating}
@@ -166,18 +218,20 @@ function MovieDetails({
           </h3>
 
           <div className="row">
-            {relatedMovies.map((relatedMovie) => (
-              <div
-                key={relatedMovie.id}
-                className="col-sm-6 col-md-4 col-lg-3 mb-4"
-              >
-                <MovieCard
-                  movie={relatedMovie}
-                  favorites={favorites}
-                  setFavorites={setFavorites}
-                />
-              </div>
-            ))}
+            {relatedMovies.map(
+              (relatedMovie) => (
+                <div
+                  key={relatedMovie.id}
+                  className="col-sm-6 col-md-4 col-lg-3 mb-4"
+                >
+                  <MovieCard
+                    movie={relatedMovie}
+                    favorites={favorites}
+                    setFavorites={setFavorites}
+                  />
+                </div>
+              )
+            )}
           </div>
         </div>
       )}
