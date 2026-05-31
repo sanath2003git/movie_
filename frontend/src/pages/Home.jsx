@@ -10,6 +10,7 @@ function Home({
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedGenre, setSelectedGenre] = useState("All")
   const [sortBy, setSortBy] = useState("")
+  const [page, setPage] = useState(1)
 
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(true)
@@ -39,7 +40,8 @@ function Home({
         const data = await getMovies(
           searchQuery,
           selectedGenre,
-          sortMap[sortBy] || ""
+          sortMap[sortBy] || "",
+          page
         )
 
         setMovies(data)
@@ -64,14 +66,13 @@ function Home({
   }, [
     searchQuery,
     selectedGenre,
-    sortBy
+    sortBy,
+    page
   ])
 
   const handleSearch = (e) => {
     e.preventDefault()
   }
-
-  const filteredMovies = movies
 
   if (loading) {
     return (
@@ -103,11 +104,12 @@ function Home({
               placeholder="Search for anime movies..."
               className="form-control"
               value={searchQuery}
-              onChange={(e) =>
+              onChange={(e) => {
                 setSearchQuery(
                   e.target.value
                 )
-              }
+                setPage(1)
+              }}
             />
 
             <button
@@ -128,11 +130,12 @@ function Home({
           <select
             className="form-select"
             value={selectedGenre}
-            onChange={(e) =>
+            onChange={(e) => {
               setSelectedGenre(
                 e.target.value
               )
-            }
+              setPage(1)
+            }}
           >
             {genres.map((genre) => (
               <option
@@ -149,11 +152,12 @@ function Home({
           <select
             className="form-select"
             value={sortBy}
-            onChange={(e) =>
+            onChange={(e) => {
               setSortBy(
                 e.target.value
               )
-            }
+              setPage(1)
+            }}
           >
             <option value="">
               Sort By
@@ -194,10 +198,7 @@ function Home({
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>
-                {movies.length}
-              </h3>
-
+              <h3>{movies.length}</h3>
               <p className="mb-0">
                 🎬 Movies
               </p>
@@ -208,10 +209,7 @@ function Home({
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>
-                {favorites.length}
-              </h3>
-
+              <h3>{favorites.length}</h3>
               <p className="mb-0">
                 ❤️ Favorites
               </p>
@@ -222,10 +220,7 @@ function Home({
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>
-                {watchlist.length}
-              </h3>
-
+              <h3>{watchlist.length}</h3>
               <p className="mb-0">
                 ⏰ Watchlist
               </p>
@@ -236,10 +231,7 @@ function Home({
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>
-                {genres.length - 1}
-              </h3>
-
+              <h3>{genres.length - 1}</h3>
               <p className="mb-0">
                 🎭 Genres
               </p>
@@ -249,7 +241,7 @@ function Home({
 
       </div>
 
-      {filteredMovies.length === 0 ? (
+      {movies.length === 0 ? (
         <div className="text-center mt-5">
 
           <h2>
@@ -262,10 +254,10 @@ function Home({
 
         </div>
       ) : (
-        <div className="row">
+        <>
+          <div className="row">
 
-          {filteredMovies.map(
-            (movie) => (
+            {movies.map((movie) => (
               <div
                 key={movie.id}
                 className="col-sm-6 col-md-4 col-lg-3 mb-4"
@@ -276,10 +268,37 @@ function Home({
                   setFavorites={setFavorites}
                 />
               </div>
-            )
-          )}
+            ))}
 
-        </div>
+          </div>
+
+          <div className="d-flex justify-content-center gap-3 mt-4">
+
+            <button
+              className="btn btn-outline-primary"
+              disabled={page === 1}
+              onClick={() =>
+                setPage(page - 1)
+              }
+            >
+              ← Previous
+            </button>
+
+            <span className="align-self-center fw-bold">
+              Page {page}
+            </span>
+
+            <button
+              className="btn btn-outline-primary"
+              onClick={() =>
+                setPage(page + 1)
+              }
+            >
+              Next →
+            </button>
+
+          </div>
+        </>
       )}
 
     </div>

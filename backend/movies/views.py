@@ -14,6 +14,12 @@ def movie_list(request):
     genre = request.GET.get("genre")
     sort = request.GET.get("sort")
 
+    page = int(
+        request.GET.get("page", 1)
+    )
+
+    limit = 8
+
     # Search
     if search:
         movies = movies.filter(
@@ -44,6 +50,12 @@ def movie_list(request):
 
     elif sort == "title_desc":
         movies = movies.order_by("-title")
+
+    # Pagination
+    start = (page - 1) * limit
+    end = start + limit
+
+    movies = movies[start:end]
 
     serializer = MovieSerializer(
         movies,

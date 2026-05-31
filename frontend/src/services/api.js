@@ -7,7 +7,8 @@ const API_URL =
 export const getMovies = async (
   search = "",
   genre = "All",
-  sort = ""
+  sort = "",
+  page = 1
 ) => {
 
   const response = await axios.get(
@@ -16,7 +17,8 @@ export const getMovies = async (
       params: {
         search,
         genre,
-        sort
+        sort,
+        page
       }
     }
   )
