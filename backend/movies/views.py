@@ -7,7 +7,15 @@ from .serializers import MovieSerializer
 
 @api_view(["GET"])
 def movie_list(request):
+
     movies = Movie.objects.all()
+
+    search = request.GET.get("search")
+
+    if search:
+        movies = movies.filter(
+            title__icontains=search
+        )
 
     serializer = MovieSerializer(
         movies,
@@ -16,15 +24,12 @@ def movie_list(request):
 
     return Response(serializer.data)
 
-@api_view(["GET"])
-def movie_list(request):
-    movies = Movie.objects.all()
-    serializer = MovieSerializer(movies, many=True)
-    return Response(serializer.data)
-
 
 @api_view(["GET"])
 def movie_detail(request, pk):
+
     movie = Movie.objects.get(pk=pk)
+
     serializer = MovieSerializer(movie)
+
     return Response(serializer.data)

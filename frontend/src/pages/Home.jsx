@@ -25,8 +25,14 @@ function Home({
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const data = await getMovies()
+        setLoading(true)
+
+        const data = await getMovies(
+          searchQuery
+        )
+
         setMovies(data)
+
       } catch (error) {
         console.error(
           "Error fetching movies:",
@@ -37,25 +43,29 @@ function Home({
       }
     }
 
-    fetchMovies()
-  }, [])
+    const timer = setTimeout(
+      fetchMovies,
+      300
+    )
+
+    return () => clearTimeout(timer)
+
+  }, [searchQuery])
 
   const handleSearch = (e) => {
     e.preventDefault()
   }
 
-  let filteredMovies = movies.filter((movie) => {
-    const matchesSearch =
-      movie.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
+  let filteredMovies = movies.filter(
+    (movie) => {
 
-    const matchesGenre =
-      selectedGenre === "All" ||
-      movie.genre === selectedGenre
+      const matchesGenre =
+        selectedGenre === "All" ||
+        movie.genre === selectedGenre
 
-    return matchesSearch && matchesGenre
-  })
+      return matchesGenre
+    }
+  )
 
   filteredMovies = [...filteredMovies]
 
@@ -133,7 +143,9 @@ function Home({
               className="form-control"
               value={searchQuery}
               onChange={(e) =>
-                setSearchQuery(e.target.value)
+                setSearchQuery(
+                  e.target.value
+                )
               }
             />
 
@@ -141,8 +153,8 @@ function Home({
               type="submit"
               className="btn btn-primary"
             >
-              <i className="bi bi-search"></i>{" "}
-              Search
+              <i className="bi bi-search"></i>
+              {" "}Search
             </button>
           </div>
         </div>
@@ -154,7 +166,9 @@ function Home({
             className="form-select"
             value={selectedGenre}
             onChange={(e) =>
-              setSelectedGenre(e.target.value)
+              setSelectedGenre(
+                e.target.value
+              )
             }
           >
             {genres.map((genre) => (
@@ -173,7 +187,9 @@ function Home({
             className="form-select"
             value={sortBy}
             onChange={(e) =>
-              setSortBy(e.target.value)
+              setSortBy(
+                e.target.value
+              )
             }
           >
             <option value="">
@@ -208,12 +224,15 @@ function Home({
       </div>
 
       {/* Statistics Dashboard */}
+
       <div className="row mb-4">
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
               <h3>{movies.length}</h3>
-              <p className="mb-0">🎬 Movies</p>
+              <p className="mb-0">
+                🎬 Movies
+              </p>
             </div>
           </div>
         </div>
@@ -221,8 +240,13 @@ function Home({
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>{favorites.length}</h3>
-              <p className="mb-0">❤️ Favorites</p>
+              <h3>
+                {favorites.length}
+              </h3>
+
+              <p className="mb-0">
+                ❤️ Favorites
+              </p>
             </div>
           </div>
         </div>
@@ -230,8 +254,13 @@ function Home({
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>{watchlist.length}</h3>
-              <p className="mb-0">⏰ Watchlist</p>
+              <h3>
+                {watchlist.length}
+              </h3>
+
+              <p className="mb-0">
+                ⏰ Watchlist
+              </p>
             </div>
           </div>
         </div>
@@ -239,8 +268,13 @@ function Home({
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>{genres.length - 1}</h3>
-              <p className="mb-0">🎭 Genres</p>
+              <h3>
+                {genres.length - 1}
+              </h3>
+
+              <p className="mb-0">
+                🎭 Genres
+              </p>
             </div>
           </div>
         </div>
@@ -248,25 +282,30 @@ function Home({
 
       {filteredMovies.length === 0 ? (
         <div className="text-center mt-5">
-          <h2>No movies found 🎬</h2>
+          <h2>
+            No movies found 🎬
+          </h2>
+
           <p className="text-muted">
             Try another search.
           </p>
         </div>
       ) : (
         <div className="row">
-          {filteredMovies.map((movie) => (
-            <div
-              key={movie.id}
-              className="col-sm-6 col-md-4 col-lg-3 mb-4"
-            >
-              <MovieCard
-                movie={movie}
-                favorites={favorites}
-                setFavorites={setFavorites}
-              />
-            </div>
-          ))}
+          {filteredMovies.map(
+            (movie) => (
+              <div
+                key={movie.id}
+                className="col-sm-6 col-md-4 col-lg-3 mb-4"
+              >
+                <MovieCard
+                  movie={movie}
+                  favorites={favorites}
+                  setFavorites={setFavorites}
+                />
+              </div>
+            )
+          )}
         </div>
       )}
     </div>
