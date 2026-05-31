@@ -32,6 +32,9 @@ def movie_list(request):
             genre=genre
         )
 
+    # Count BEFORE pagination
+    count = movies.count()
+
     # Sorting
     if sort == "rating_desc":
         movies = movies.order_by("-rating")
@@ -62,7 +65,16 @@ def movie_list(request):
         many=True
     )
 
-    return Response(serializer.data)
+    total_pages = (
+        count + limit - 1
+    ) // limit
+
+    return Response({
+        "count": count,
+        "page": page,
+        "total_pages": total_pages,
+        "results": serializer.data
+    })
 
 
 @api_view(["GET"])

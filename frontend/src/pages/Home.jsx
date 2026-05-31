@@ -13,6 +13,9 @@ function Home({
   const [page, setPage] = useState(1)
 
   const [movies, setMovies] = useState([])
+  const [totalMovies, setTotalMovies] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+
   const [loading, setLoading] = useState(true)
 
   const genres = [
@@ -44,7 +47,9 @@ function Home({
           page
         )
 
-        setMovies(data)
+        setMovies(data.results)
+        setTotalMovies(data.count)
+        setTotalPages(data.total_pages)
 
       } catch (error) {
         console.error(
@@ -198,7 +203,8 @@ function Home({
         <div className="col-md-3 col-6 mb-3">
           <div className="card text-center shadow-sm">
             <div className="card-body">
-              <h3>{movies.length}</h3>
+              <h3>{totalMovies}</h3>
+
               <p className="mb-0">
                 🎬 Movies
               </p>
@@ -210,6 +216,7 @@ function Home({
           <div className="card text-center shadow-sm">
             <div className="card-body">
               <h3>{favorites.length}</h3>
+
               <p className="mb-0">
                 ❤️ Favorites
               </p>
@@ -221,6 +228,7 @@ function Home({
           <div className="card text-center shadow-sm">
             <div className="card-body">
               <h3>{watchlist.length}</h3>
+
               <p className="mb-0">
                 ⏰ Watchlist
               </p>
@@ -232,6 +240,7 @@ function Home({
           <div className="card text-center shadow-sm">
             <div className="card-body">
               <h3>{genres.length - 1}</h3>
+
               <p className="mb-0">
                 🎭 Genres
               </p>
@@ -285,11 +294,12 @@ function Home({
             </button>
 
             <span className="align-self-center fw-bold">
-              Page {page}
+              Page {page} of {totalPages}
             </span>
 
             <button
               className="btn btn-outline-primary"
+              disabled={page >= totalPages}
               onClick={() =>
                 setPage(page + 1)
               }
