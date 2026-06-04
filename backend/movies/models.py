@@ -17,3 +17,16 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Favorite(models.Model):
+    movie = models.ForeignKey(
+        Movie,
+        on_delete=models.CASCADE
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return self.movie.title

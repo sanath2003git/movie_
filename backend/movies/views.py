@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Movie
-from .serializers import MovieSerializer
+from .models import Movie, Favorite
+from .serializers import MovieSerializer,FavoriteSerializer
 
 
 @api_view(["GET"])
@@ -85,3 +85,50 @@ def movie_detail(request, pk):
     serializer = MovieSerializer(movie)
 
     return Response(serializer.data)
+
+@api_view(["GET"])
+def favorite_list(request):
+
+    favorites = Favorite.objects.all()
+
+    serializer = FavoriteSerializer(
+        favorites,
+        many=True
+    )
+
+    return Response(serializer.data)
+
+@api_view(["POST"])
+def add_favorite(request):
+
+    movie_id = request.data.get(
+        "movie_id"
+    )
+
+    movie = Movie.objects.get(
+        id=movie_id
+    )
+
+    Favorite.objects.get_or_create(
+        movie=movie
+    )
+
+    return Response({
+        "message":
+        "Added to favorites"
+    })
+
+@api_view(["DELETE"])
+def delete_favorite(
+    request,
+    movie_id
+):
+
+    Favorite.objects.filter(
+        movie_id=movie_id
+    ).delete()
+
+    return Response({
+        "message":
+        "Removed from favorites"
+    })

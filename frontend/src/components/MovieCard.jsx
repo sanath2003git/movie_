@@ -1,21 +1,60 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
 
-function MovieCard({ movie, favorites, setFavorites }) {
+import {
+  addFavorite,
+  deleteFavorite
+} from "../services/favoriteApi"
+
+function MovieCard({
+  movie,
+  favorites,
+  setFavorites
+}) {
+
   const isFavorite = favorites.some(
-    (favMovie) => favMovie.id === movie.id
-  );
+    (favMovie) =>
+      favMovie.id === movie.id
+  )
 
-  function onFavoriteClick(e) {
-    e.preventDefault();
+  async function onFavoriteClick(e) {
 
-    if (isFavorite) {
-      setFavorites(
-        favorites.filter(
-          (favMovie) => favMovie.id !== movie.id
+    e.preventDefault()
+
+    try {
+
+      if (isFavorite) {
+
+        await deleteFavorite(
+          movie.id
         )
-      );
-    } else {
-      setFavorites([...favorites, movie]);
+
+        setFavorites(
+          favorites.filter(
+            (favMovie) =>
+              favMovie.id !== movie.id
+          )
+        )
+
+      } else {
+
+        await addFavorite(
+          movie.id
+        )
+
+        setFavorites([
+          ...favorites,
+          movie
+        ])
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Favorite error:",
+        error
+      )
+
     }
   }
 
@@ -25,18 +64,21 @@ function MovieCard({ movie, favorites, setFavorites }) {
       className="text-decoration-none"
     >
       <div className="card h-100 shadow-sm border-0">
+
         <img
           src={movie.image_url}
           alt={movie.title}
           className="card-img-top"
           style={{
             height: "400px",
-            objectFit: "cover",
+            objectFit: "cover"
           }}
         />
 
         <div className="card-body d-flex flex-column">
+
           <div className="mb-2">
+
             <span className="badge bg-primary me-2">
               {movie.genre}
             </span>
@@ -44,6 +86,7 @@ function MovieCard({ movie, favorites, setFavorites }) {
             <span className="badge bg-warning text-dark">
               ⭐ {movie.rating}
             </span>
+
           </div>
 
           <h5 className="card-title text-dark fw-bold">
@@ -51,10 +94,11 @@ function MovieCard({ movie, favorites, setFavorites }) {
           </h5>
 
           <p className="card-text text-muted mb-3">
-             {movie.released_date}
+            {movie.released_date}
           </p>
 
           <div className="mt-auto">
+
             <button
               className={
                 isFavorite
@@ -63,6 +107,7 @@ function MovieCard({ movie, favorites, setFavorites }) {
               }
               onClick={onFavoriteClick}
             >
+
               {isFavorite ? (
                 <>
                   <i className="bi bi-heart-fill"></i>
@@ -74,12 +119,16 @@ function MovieCard({ movie, favorites, setFavorites }) {
                   {" "}Favorite
                 </>
               )}
+
             </button>
+
           </div>
+
         </div>
+
       </div>
     </Link>
-  );
+  )
 }
 
-export default MovieCard;
+export default MovieCard
