@@ -1,14 +1,26 @@
 import "./css/App.css"
+
 import Home from "./pages/Home"
 import Favorites from "./pages/Favorites"
 import Watchlist from "./pages/Watchlist"
-import NavBar from "./components/NavBar"
-import Footer from "./components/Footer"
 import MovieDetails from "./pages/MovieDetails"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
 import NotFound from "./pages/NotFound"
 
-import { Routes, Route } from "react-router-dom"
-import { useState, useEffect } from "react"
+import NavBar from "./components/NavBar"
+import Footer from "./components/Footer"
+import ProtectedRoute from "./components/ProtectedRoute"
+
+import {
+  Routes,
+  Route
+} from "react-router-dom"
+
+import {
+  useState,
+  useEffect
+} from "react"
 
 import {
   getFavorites
@@ -27,6 +39,13 @@ function App() {
     useState([])
 
   useEffect(() => {
+
+    const token =
+      localStorage.getItem(
+        "access"
+      )
+
+    if (!token) return
 
     const fetchFavorites =
       async () => {
@@ -62,6 +81,13 @@ function App() {
   }, [])
 
   useEffect(() => {
+
+    const token =
+      localStorage.getItem(
+        "access"
+      )
+
+    if (!token) return
 
     const fetchWatchlist =
       async () => {
@@ -119,22 +145,26 @@ function App() {
           <Route
             path="/favorites"
             element={
-              <Favorites
-                favorites={favorites}
-                setFavorites={setFavorites}
-              />
+              <ProtectedRoute>
+                <Favorites
+                  favorites={favorites}
+                  setFavorites={setFavorites}
+                />
+              </ProtectedRoute>
             }
           />
 
           <Route
             path="/watchlist"
             element={
-              <Watchlist
-                watchlist={watchlist}
-                setWatchlist={setWatchlist}
-                favorites={favorites}
-                setFavorites={setFavorites}
-              />
+              <ProtectedRoute>
+                <Watchlist
+                  watchlist={watchlist}
+                  setWatchlist={setWatchlist}
+                  favorites={favorites}
+                  setFavorites={setFavorites}
+                />
+              </ProtectedRoute>
             }
           />
 
@@ -151,10 +181,18 @@ function App() {
           />
 
           <Route
+            path="/login"
+            element={<Login />}
+          />
+
+          <Route
+            path="/register"
+            element={<Register />}
+          />
+
+          <Route
             path="*"
-            element={
-              <NotFound />
-            }
+            element={<NotFound />}
           />
 
         </Routes>
