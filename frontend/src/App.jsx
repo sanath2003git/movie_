@@ -14,26 +14,17 @@ import {
   getFavorites
 } from "./services/favoriteApi"
 
+import {
+  getWatchlist
+} from "./services/watchlistApi"
+
 function App() {
 
   const [favorites, setFavorites] =
     useState([])
 
   const [watchlist, setWatchlist] =
-    useState(() => {
-
-      const savedWatchlist =
-        localStorage.getItem(
-          "watchlist"
-        )
-
-      return savedWatchlist
-        ? JSON.parse(
-            savedWatchlist
-          )
-        : []
-
-    })
+    useState([])
 
   useEffect(() => {
 
@@ -72,14 +63,38 @@ function App() {
 
   useEffect(() => {
 
-    localStorage.setItem(
-      "watchlist",
-      JSON.stringify(
-        watchlist
-      )
-    )
+    const fetchWatchlist =
+      async () => {
 
-  }, [watchlist])
+        try {
+
+          const data =
+            await getWatchlist()
+
+          const movies =
+            data.map(
+              (item) =>
+                item.movie
+            )
+
+          setWatchlist(
+            movies
+          )
+
+        } catch (error) {
+
+          console.error(
+            "Error loading watchlist:",
+            error
+          )
+
+        }
+
+      }
+
+    fetchWatchlist()
+
+  }, [])
 
   return (
     <div className="d-flex flex-column min-vh-100">
