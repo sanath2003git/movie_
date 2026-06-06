@@ -30,3 +30,17 @@ class Favorite(models.Model):
 
     def __str__(self):
         return self.movie.title
+    
+class Watchlist(models.Model):
+
+    movie = models.ForeignKey(
+        Movie,
+        on_delete=models.CASCADE
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return self.movie.title
