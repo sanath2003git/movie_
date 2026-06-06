@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.contrib.auth.models import User
 
 from .models import (
     Movie,
@@ -9,7 +10,9 @@ from .models import (
 from .serializers import (
     MovieSerializer,
     FavoriteSerializer,
-    WatchlistSerializer
+    WatchlistSerializer,
+    RegisterSerializer
+
 )
 
 
@@ -187,3 +190,26 @@ def delete_watchlist(
         "message":
         "Removed from watchlist"
     })
+
+@api_view(["POST"])
+def register_user(request):
+
+    serializer =RegisterSerializer(
+            data=request.data
+        )
+
+    if serializer.is_valid():
+
+        serializer.save()
+
+        return Response(
+            {
+                "message":
+                "User created successfully"
+            }
+        )
+
+    return Response(
+        serializer.errors,
+        status=400
+    )

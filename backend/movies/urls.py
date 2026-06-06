@@ -9,7 +9,9 @@ from .views import (
 
     watchlist_list,
     add_watchlist,
-    delete_watchlist
+    delete_watchlist,
+
+    register_user
 )
 
 urlpatterns = [
@@ -21,4 +23,5 @@ urlpatterns = [
     path("watchlist/",watchlist_list),
     path("watchlist/add/",add_watchlist),
     path("watchlist/delete/<int:movie_id>/",delete_watchlist),
+    path("register/",register_user),
 ]
