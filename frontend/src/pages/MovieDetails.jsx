@@ -1,5 +1,13 @@
-import { useParams, Link } from "react-router-dom"
-import { useState, useEffect } from "react"
+import {
+  useParams,
+  Link,
+  useNavigate
+} from "react-router-dom"
+
+import {
+  useState,
+  useEffect
+} from "react"
 
 import {
   getMovieById,
@@ -27,15 +35,18 @@ function MovieDetails({
 
   const { id } = useParams()
 
+  const navigate =
+    useNavigate()
+
   const [movie, setMovie] =
     useState(null)
 
-  const [relatedMovies,
-    setRelatedMovies] =
-    useState([])
+  const [
+    relatedMovies,
+    setRelatedMovies
+  ] = useState([])
 
-  const [loading,
-    setLoading] =
+  const [loading, setLoading] =
     useState(true)
 
   useEffect(() => {
@@ -144,6 +155,19 @@ function MovieDetails({
 
   async function toggleFavorite() {
 
+    const token =
+      localStorage.getItem(
+        "access"
+      )
+
+    if (!token) {
+
+      navigate("/login")
+
+      return
+
+    }
+
     try {
 
       if (isFavorite) {
@@ -184,6 +208,19 @@ function MovieDetails({
   }
 
   async function toggleWatchlist() {
+
+    const token =
+      localStorage.getItem(
+        "access"
+      )
+
+    if (!token) {
+
+      navigate("/login")
+
+      return
+
+    }
 
     try {
 
@@ -263,11 +300,9 @@ function MovieDetails({
             </span>
 
             {movie.franchise && (
-
               <span className="badge bg-info me-2">
                 {movie.franchise}
               </span>
-
             )}
 
             <span className="badge bg-warning text-dark">

@@ -1,11 +1,20 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Movie(models.Model):
-    title = models.CharField(max_length=200)
-    franchise = models.CharField(max_length=200)
 
-    genre = models.CharField(max_length=100)
+    title = models.CharField(
+        max_length=200
+    )
+
+    franchise = models.CharField(
+        max_length=200
+    )
+
+    genre = models.CharField(
+        max_length=100
+    )
 
     rating = models.FloatField()
 
@@ -17,8 +26,15 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+
 class Favorite(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
     movie = models.ForeignKey(
         Movie,
         on_delete=models.CASCADE
@@ -29,10 +45,19 @@ class Favorite(models.Model):
     )
 
     def __str__(self):
-        return self.movie.title
-    
+        return (
+            f"{self.user.username} - "
+            f"{self.movie.title}"
+        )
+
+
 class Watchlist(models.Model):
 
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
     movie = models.ForeignKey(
         Movie,
         on_delete=models.CASCADE
@@ -43,4 +68,7 @@ class Watchlist(models.Model):
     )
 
     def __str__(self):
-        return self.movie.title
+        return (
+            f"{self.user.username} - "
+            f"{self.movie.title}"
+        )

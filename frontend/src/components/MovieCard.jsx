@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import {
   addFavorite,
@@ -11,6 +11,8 @@ function MovieCard({
   setFavorites
 }) {
 
+  const navigate = useNavigate()
+
   const isFavorite = favorites.some(
     (favMovie) =>
       favMovie.id === movie.id
@@ -19,6 +21,18 @@ function MovieCard({
   async function onFavoriteClick(e) {
 
     e.preventDefault()
+
+    const token =
+      localStorage.getItem(
+        "access"
+      )
+
+    if (!token) {
+
+      navigate("/login")
+
+      return
+    }
 
     try {
 

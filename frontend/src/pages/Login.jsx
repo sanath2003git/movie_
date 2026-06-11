@@ -1,10 +1,7 @@
 import { useState } from "react"
 import { loginUser } from "../services/authApi"
-import { useNavigate } from "react-router-dom"
 
 function Login() {
-
-  const navigate = useNavigate()
 
   const [username, setUsername] =
     useState("")
@@ -37,7 +34,7 @@ function Login() {
         data.refresh
       )
 
-      navigate("/")
+      window.location.href = "/"
 
     } catch {
 

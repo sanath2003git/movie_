@@ -1,5 +1,14 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import (
+    api_view,
+    permission_classes
+)
+
+from rest_framework.permissions import (
+    IsAuthenticated
+)
+
 from rest_framework.response import Response
+
 from django.contrib.auth.models import User
 
 from .models import (
@@ -7,12 +16,12 @@ from .models import (
     Favorite,
     Watchlist
 )
+
 from .serializers import (
     MovieSerializer,
     FavoriteSerializer,
     WatchlistSerializer,
     RegisterSerializer
-
 )
 
 
@@ -31,41 +40,56 @@ def movie_list(request):
 
     limit = 8
 
-    # Search
     if search:
+
         movies = movies.filter(
             title__icontains=search
         )
 
-    # Genre Filter
     if genre and genre != "All":
+
         movies = movies.filter(
             genre=genre
         )
 
-    # Count BEFORE pagination
     count = movies.count()
 
-    # Sorting
     if sort == "rating_desc":
-        movies = movies.order_by("-rating")
+
+        movies = movies.order_by(
+            "-rating"
+        )
 
     elif sort == "rating_asc":
-        movies = movies.order_by("rating")
+
+        movies = movies.order_by(
+            "rating"
+        )
 
     elif sort == "year_desc":
-        movies = movies.order_by("-released_date")
+
+        movies = movies.order_by(
+            "-released_date"
+        )
 
     elif sort == "year_asc":
-        movies = movies.order_by("released_date")
+
+        movies = movies.order_by(
+            "released_date"
+        )
 
     elif sort == "title_asc":
-        movies = movies.order_by("title")
+
+        movies = movies.order_by(
+            "title"
+        )
 
     elif sort == "title_desc":
-        movies = movies.order_by("-title")
 
-    # Pagination
+        movies = movies.order_by(
+            "-title"
+        )
+
     start = (page - 1) * limit
     end = start + limit
 
@@ -91,25 +115,41 @@ def movie_list(request):
 @api_view(["GET"])
 def movie_detail(request, pk):
 
-    movie = Movie.objects.get(pk=pk)
+    movie = Movie.objects.get(
+        pk=pk
+    )
 
-    serializer = MovieSerializer(movie)
+    serializer = MovieSerializer(
+        movie
+    )
 
-    return Response(serializer.data)
+    return Response(
+        serializer.data
+    )
+
+
+# FAVORITES
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def favorite_list(request):
 
-    favorites = Favorite.objects.all()
+    favorites = Favorite.objects.filter(
+        user=request.user
+    )
 
     serializer = FavoriteSerializer(
         favorites,
         many=True
     )
 
-    return Response(serializer.data)
+    return Response(
+        serializer.data
+    )
+
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def add_favorite(request):
 
     movie_id = request.data.get(
@@ -121,6 +161,7 @@ def add_favorite(request):
     )
 
     Favorite.objects.get_or_create(
+        user=request.user,
         movie=movie
     )
 
@@ -129,13 +170,16 @@ def add_favorite(request):
         "Added to favorites"
     })
 
+
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def delete_favorite(
     request,
     movie_id
 ):
 
     Favorite.objects.filter(
+        user=request.user,
         movie_id=movie_id
     ).delete()
 
@@ -144,19 +188,29 @@ def delete_favorite(
         "Removed from favorites"
     })
 
+
+# WATCHLIST
+
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def watchlist_list(request):
 
-    watchlist = Watchlist.objects.all()
+    watchlist = Watchlist.objects.filter(
+        user=request.user
+    )
 
     serializer = WatchlistSerializer(
         watchlist,
         many=True
     )
 
-    return Response(serializer.data)
+    return Response(
+        serializer.data
+    )
+
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def add_watchlist(request):
 
     movie_id = request.data.get(
@@ -168,6 +222,7 @@ def add_watchlist(request):
     )
 
     Watchlist.objects.get_or_create(
+        user=request.user,
         movie=movie
     )
 
@@ -176,13 +231,16 @@ def add_watchlist(request):
         "Added to watchlist"
     })
 
+
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def delete_watchlist(
     request,
     movie_id
 ):
 
     Watchlist.objects.filter(
+        user=request.user,
         movie_id=movie_id
     ).delete()
 
@@ -191,23 +249,24 @@ def delete_watchlist(
         "Removed from watchlist"
     })
 
+
+# REGISTER
+
 @api_view(["POST"])
 def register_user(request):
 
-    serializer =RegisterSerializer(
-            data=request.data
-        )
+    serializer = RegisterSerializer(
+        data=request.data
+    )
 
     if serializer.is_valid():
 
         serializer.save()
 
-        return Response(
-            {
-                "message":
-                "User created successfully"
-            }
-        )
+        return Response({
+            "message":
+            "User created successfully"
+        })
 
     return Response(
         serializer.errors,

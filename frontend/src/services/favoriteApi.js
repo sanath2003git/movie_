@@ -3,39 +3,56 @@ import axios from "axios"
 const API_URL =
   "http://127.0.0.1:8000/api/movies/favorites/"
 
+const getAuthHeaders = () => {
 
-export const getFavorites = async () => {
+  const token =
+    localStorage.getItem(
+      "access"
+    )
 
-  const response = await axios.get(
-    API_URL
-  )
-
-  return response.data
-}
-
-
-export const addFavorite = async (
-  movieId
-) => {
-
-  const response = await axios.post(
-    `${API_URL}add/`,
-    {
-      movie_id: movieId
+  return {
+    headers: {
+      Authorization:
+        `Bearer ${token}`
     }
-  )
-
-  return response.data
+  }
 }
 
+export const getFavorites =
+  async () => {
 
-export const deleteFavorite = async (
-  movieId
-) => {
+    const response =
+      await axios.get(
+        API_URL,
+        getAuthHeaders()
+      )
 
-  const response = await axios.delete(
-    `${API_URL}delete/${movieId}/`
-  )
+    return response.data
+  }
 
-  return response.data
-}
+export const addFavorite =
+  async (movieId) => {
+
+    const response =
+      await axios.post(
+        `${API_URL}add/`,
+        {
+          movie_id: movieId
+        },
+        getAuthHeaders()
+      )
+
+    return response.data
+  }
+
+export const deleteFavorite =
+  async (movieId) => {
+
+    const response =
+      await axios.delete(
+        `${API_URL}delete/${movieId}/`,
+        getAuthHeaders()
+      )
+
+    return response.data
+  }
